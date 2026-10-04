@@ -102,13 +102,35 @@
      The grader checks your code against what you claim here, so the file and
      function have to be real. -->
 
-**Branch rule:**
+**Branch rule:** If `search_listings` returns an empty list, store an actionable message in `session["error"]` and stop. Otherwise, store the first result in `session["selected_item"]` and continue to `suggest_outfit`.
 
 **Where it lives:** `agent.py::run_agent`
 
-**How the query is parsed:** <!-- regex, string splitting, or asking the model — say which -->
+**How the query is parsed:** The program uses regular expressions (text-matching patterns) to find a size and a budget in the user's request. For example, it reads `size M` as the size and `under $30` as the maximum price. It removes those parts, then uses the words left over as the item description. This step follows fixed rules and does not use the AI model.
 
-**What moves through the session:** <!-- which fields, in what order -->
+**What moves through the session:** The session is the shared record of one request. It first saves what the user typed (`query`) and the three details taken from it (`description`, `size`, and `max_price` inside `parsed`). Next it saves the matching listings (`search_results`) and chooses the first one (`selected_item`). The selected item and the user's wardrobe are used to save an outfit idea (`outfit_suggestion`), and that idea becomes the final caption (`fit_card`). If there are no matching listings, the session saves a helpful message (`error`) and stops before creating an outfit or caption.
+
+```mermaid
+%%{init: {"flowchart": {"nodeSpacing": 16, "rankSpacing": 22, "diagramPadding": 4}, "themeVariables": {"fontSize": "12px"}}}%%
+flowchart TD
+    A["User types a request<br/>Example: vintage tee, size M, under $30"]
+    A --> B["Find size and budget<br/>using fixed text-matching rules"]
+    B --> C["Save the request details<br/>description, size, max_price"]
+    C --> D["Search the listings<br/>search_listings"]
+    D --> E{"Were any matches found?"}
+
+    E -- "No" --> F["Save a helpful message<br/>error"]
+    F --> G["Stop"]
+
+    E -- "Yes" --> H["Save all matches<br/>search_results"]
+    H --> I["Choose and save the first match<br/>selected_item"]
+    I --> J["Combine selected_item<br/>with the user's wardrobe"]
+    J --> K["Generate an outfit idea<br/>suggest_outfit"]
+    K --> L["Save the outfit idea<br/>outfit_suggestion"]
+    L --> M["Create a short caption<br/>create_fit_card"]
+    M --> N["Save the final caption<br/>fit_card"]
+    N --> O["Return the completed session"]
+```
 
 ---
 
