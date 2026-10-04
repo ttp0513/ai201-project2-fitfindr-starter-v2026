@@ -59,10 +59,15 @@
 
 ### `search_listings`
 
-- **What it does:**
-- **Inputs:** <!-- name and type each: `max_price` (float), not "a price" -->
+- **What it does:** Searches the local listings for description keywords, then optionally filters the results by size and an inclusive maximum price without calling the model.
+- **Inputs:** 
+  - `description` (`str`) contains the requested item keywords;
+  -  `size` (`str | None`) is an optional, case-insensitive size filter; 
+  -  `max_price` (`float | None`) is an optional inclusive price ceiling. Letter sizes are matched as complete size options, so `M` matches `S/M` but does not match `XL` or the `S` in `US 9`.
 - **Returns:**
-- **When it has nothing:**
+  -  A `list[dict]` of matching listings ordered from best keyword match to worst.
+  -  Each listing includes `id`, `title`, `description`, `category`, `style_tags`, `size`, `condition`, `price`, `colors`, `brand`, and `platform`.
+- **When it has nothing:** Returns an empty list (`[]`), rather than `None` or an exception.
 
 ### `suggest_outfit`
 
