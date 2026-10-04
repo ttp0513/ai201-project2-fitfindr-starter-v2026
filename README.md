@@ -71,17 +71,21 @@
 
 ### `suggest_outfit`
 
-- **What it does:**
+- **What it does:** Uses the selected thrift listing and the user's wardrobe to generate one or two outfit ideas, naming pieces the user already owns when they are available.
 - **Inputs:**
-- **Returns:**
-- **When it has nothing:**
+  - `new_item` (`dict`) is the complete listing record for the item the user is considering.
+  - `wardrobe` (`dict`) contains an `items` key whose value is a `list[dict]` of saved wardrobe pieces; the list may be empty.
+- **Returns:** A non-empty `str` containing one or two outfit suggestions built around `new_item` and, when possible, specific pieces from the user's wardrobe.
+- **When it has nothing:** If `wardrobe["items"]` is empty, it returns non-empty general styling advice for `new_item` instead of raising an error or returning an empty string.
 
 ### `create_fit_card`
 
-- **What it does:**
+- **What it does:** Turns an outfit suggestion and its thrift listing into a short, social-media-style caption with a specific fashion vibe.
 - **Inputs:**
-- **Returns:**
-- **When it has nothing:**
+  - `outfit` (`str`) is the suggestion produced by `suggest_outfit`.
+  - `new_item` (`dict`) is the complete listing record for the selected thrift item.
+- **Returns:** A `str` containing a two-to-four-sentence caption that mentions the item, its price, and its platform once each and incorporates the suggested outfit.
+- **When it has nothing:** If `outfit` is empty or contains only whitespace, it returns a descriptive message instead of raising an error or attempting to create a caption.
 
 ---
 
