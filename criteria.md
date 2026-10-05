@@ -25,9 +25,9 @@ Given a query that matches at least one listing, the agent completes all three
 tool calls and returns a fit card — in at least 4 of 5 tries.
 
 **Why this target:**
-I chose 4 of 5 instead of 5 of 5 because the search compares keywords, so a
-reasonable phrase might not use the same words as a matching listing. The last
-two tools also use AI, so allowing one inconsistent run is realistic.
+I picked 4 of 5 because the search only compares words. A user might describe
+the right item in a different way, and the two AI-generated responses can also
+vary, so expecting a perfect result every time would not be realistic.
 
 ---
 
@@ -37,9 +37,9 @@ Given a query that matches no listings, the agent stops before calling
 `suggest_outfit` and returns a message naming what to change — 5 of 5 tries.
 
 **Why this target:**
-I chose 5 of 5 because checking for an empty list and stopping are simple,
-predictable steps that do not depend on AI. If the agent continues to
-`suggest_outfit`, then the branch is not working correctly.
+I picked 5 of 5 because this is a simple yes-or-no check that does not use AI.
+When there are no matches, the agent should always stop; if it continues, the
+branch is broken.
 
 ---
 
@@ -51,9 +51,9 @@ Given a query with at least one result, `session["selected_item"]["id"]` equals
 
 **Why this target:**
 
-I chose 5 of 5 because the agent should always pass along the same item it
-selected, and there is no randomness in that step. Even one mismatch would mean
-the agent found one item but created an outfit for another.
+I picked 5 of 5 because the agent should never lose track of the item it chose.
+There is no AI guesswork in copying that item forward, so even one changed ID
+would mean the session passed along the wrong item.
 
 ---
 
@@ -64,9 +64,9 @@ selected item's price and platform — in at least 4 of 5 tries.
 
 **Why this target:**
 
-I chose 4 of 5 instead of 5 of 5 because an AI-written caption may occasionally
-miss a detail or ignore the requested length. Four successful runs still show
-that the fit cards are dependable while allowing for one imperfect response.
+I picked 4 of 5 because AI-written captions can change from one run to the next
+and may occasionally leave out a detail. Four good captions out of five would
+still show that the tool usually follows the requested format.
 
 ---
 
@@ -78,9 +78,9 @@ Given a query with a maximum price, every listing in
 
 **Why this target:**
 
-I chose 5 of 5 because the maximum price is a hard limit, not a suggestion, and
-the program only needs to compare numbers. Even one item over budget would mean
-the price filter is not working correctly.
+I picked 5 of 5 because a user's budget should always be respected. The program
+is only comparing prices, so even one item above the limit would mean the filter
+is not doing its job.
 
 ---
 
