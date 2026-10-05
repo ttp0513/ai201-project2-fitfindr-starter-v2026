@@ -25,9 +25,9 @@ Given a query that matches at least one listing, the agent completes all three
 tool calls and returns a fit card — in at least 4 of 5 tries.
 
 **Why this target:**
-<!-- Why 4 of 5 and not 5 of 5? Something about your search, probably —
-     "my search is a plain keyword match and some phrasings will miss" is a
-     real answer. -->
+I chose 4 of 5 instead of 5 of 5 because the search compares keywords, so a
+reasonable phrase might not use the same words as a matching listing. The last
+two tools also use AI, so allowing one inconsistent run is realistic.
 
 ---
 
@@ -37,66 +37,50 @@ Given a query that matches no listings, the agent stops before calling
 `suggest_outfit` and returns a message naming what to change — 5 of 5 tries.
 
 **Why this target:**
-<!-- Why is 5 of 5 reasonable here when criterion 1 isn't? What's different
-     about this path? -->
+I chose 5 of 5 because checking for an empty list and stopping are simple,
+predictable steps that do not depend on AI. If the agent continues to
+`suggest_outfit`, then the branch is not working correctly.
 
 ---
 
-## 3. Something about state
+## 3. The selected listing moves through the session unchanged
 
-<!-- YOU WRITE THIS ONE.
-
-     How would you know that the item your search found is the same item the
-     next tool received? Name something countable or observable.
-
-     This is the criterion people find hardest, because state failure doesn't
-     look like state failure — it looks like a tool problem. Something that
-     compares session["selected_item"] against what actually reached
-     suggest_outfit is the shape you're after. -->
-
-
+Given a query with at least one result, `session["selected_item"]["id"]` equals
+`session["search_results"][0]["id"]`, and the `new_item` received by
+`suggest_outfit` has that same ID — in 5 of 5 tries.
 
 **Why this target:**
 
-
+I chose 5 of 5 because the agent should always pass along the same item it
+selected, and there is no randomness in that step. Even one mismatch would mean
+the agent found one item but created an outfit for another.
 
 ---
 
-## 4. Something about the fit card
+## 4. The fit card includes essential details and stays caption-sized
 
-<!-- YOU WRITE THIS ONE.
-
-     The fit card calls a model, so the same input can produce different words
-     each time. That's not a bug — it's the nature of the tool. So what would
-     make it acceptable?
-
-     Think about what you'd actually be unhappy to see. A caption that never
-     mentions the price? Two different items producing the same opening
-     sentence? A card longer than a caption anyone would post? Any of those can
-     be turned into a number. -->
-
-
+Given a matching query, the fit card is two to four sentences and includes the
+selected item's price and platform — in at least 4 of 5 tries.
 
 **Why this target:**
 
-
+I chose 4 of 5 instead of 5 of 5 because an AI-written caption may occasionally
+miss a detail or ignore the requested length. Four successful runs still show
+that the fit cards are dependable while allowing for one imperfect response.
 
 ---
 
-## 5. Your choice
+## 5. Search always respects the user's maximum price
 
-<!-- YOU WRITE THIS ONE TOO.
-
-     Pick something you actually care about getting right. Speed, the empty
-     wardrobe path, what happens when the model can't be reached, whether the
-     search respects a price ceiling — anything, as long as it names a number
-     or an observable outcome. -->
-
-
+Given a query with a maximum price, every listing in
+`session["search_results"]` has a `price` less than or equal to
+`session["parsed"]["max_price"]` — in 5 of 5 tries.
 
 **Why this target:**
 
-
+I chose 5 of 5 because the maximum price is a hard limit, not a suggestion, and
+the program only needs to compare numbers. Even one item over budget would mean
+the price filter is not working correctly.
 
 ---
 
