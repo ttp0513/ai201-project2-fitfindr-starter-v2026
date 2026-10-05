@@ -13,10 +13,78 @@ Build and test your three tools in `tools.py` first. Then come here.
     python agent.py          runs both example paths below
 """
 
+import re
+
 import config
 import trace
 from tools import search_listings, suggest_outfit, create_fit_card
 from generate import ModelUnavailable
+
+
+# Common written size names are converted to the short labels used by the data.
+_SIZE_ALIASES = {
+    "extra extra small": "XXS",
+    "extra small": "XS",
+    "small": "S",
+    "medium": "M",
+    "large": "L",
+    "extra large": "XL",
+}
+
+
+def _parse_query(query: str) -> dict:
+    """Pull the optional size and budget out of a plain-language request."""
+    description = query.strip()
+
+    # Step 1: Find a budget phrase such as "under $30". The captured number is
+    # converted to a float because listing prices are stored as numbers.
+    price_match = re.search(
+        r"\b(?:under|below|up to|max(?:imum)?(?: price)?|less than)\s*"
+        r"\$?\s*(\d+(?:\.\d{1,2})?)\b",
+        description,
+        flags=re.IGNORECASE,
+    )
+    max_price = float(price_match.group(1)) if price_match else None
+    if price_match:
+        description = description[:price_match.start()] + description[price_match.end():]
+
+    # Step 2: Find an explicitly labeled size. Sorting the aliases by length
+    # ensures "extra large" is checked before the shorter word "large".
+    size_words = "|".join(
+        sorted((re.escape(name) for name in _SIZE_ALIASES), key=len, reverse=True)
+    )
+    size_match = re.search(
+        rf"\b(?:in\s+)?size\s+({size_words}|xxs|xs|s|m|l|xl|xxl|"
+        rf"w\d+(?:\s+l\d+)?|(?:us\s*)?\d+(?:\.\d+)?)\b",
+        description,
+        flags=re.IGNORECASE,
+    )
+
+    size = None
+    if size_match:
+        written_size = size_match.group(1)
+        size = _SIZE_ALIASES.get(
+            written_size.casefold(),
+            " ".join(written_size.upper().split()),
+        )
+
+        # A bare number in a query such as "size 8" refers to a US shoe size in
+        # this dataset. Normalize both "8" and "US8" to the stored "US 8" form.
+        if re.fullmatch(r"\d+(?:\.\d+)?", size):
+            size = f"US {size}"
+        elif size.startswith("US"):
+            size = f"US {size[2:].strip()}"
+
+        description = description[:size_match.start()] + description[size_match.end():]
+
+    # Step 3: What remains is the item description sent to search_listings.
+    # Collapse extra spaces and remove punctuation left around deleted phrases.
+    description = re.sub(r"\s+", " ", description).strip(" ,.-")
+    return {
+        "description": description,
+        "size": size,
+        "max_price": max_price,
+    }
 
 
 # ── session state ─────────────────────────────────────────────────────────────
@@ -64,7 +132,7 @@ def run_agent(query: str, wardrobe: dict) -> dict:
         the run ended early and the later fields will still be None.
 
     ─────────────────────────────────────────────────────────────────────────
-    TODO — build this, following the branch rule you wrote in Milestone 2.
+    HOW THIS LOOP WORKS — follows the branch rule written in Milestone 2.
 
       1. Start a session with new_session().
 
@@ -105,10 +173,71 @@ def run_agent(query: str, wardrobe: dict) -> dict:
       • A handler for ModelUnavailable, so a bad key produces a message rather
         than a stack trace. The import is already at the top of this file.
     """
+    # Step 1: Create one shared record for the entire request. Every step below
+    # writes its output here, and the following step reads that value back out.
     session = new_session(query, wardrobe)
+    next_step = "parse_query"
+    iteration_count = 0
 
-    # TODO: delete these two lines and build the loop.
-    session["error"] = "The planning loop isn't built yet — see the TODO in agent.py."
+    while next_step is not None:
+        # Step 2: Count every pass through the loop. The provided guard raises
+        # an error if a future bug causes the planner to repeat forever.
+        iteration_count += 1
+        trace.check_iterations(iteration_count)
+
+        if next_step == "parse_query":
+            # Step 3: Convert the user's sentence into the three inputs required
+            # by search_listings, then make those values visible in the session.
+            session["parsed"] = _parse_query(session["query"])
+            next_step = "search_listings"
+
+        elif next_step == "search_listings":
+            # Step 4: Read the parsed inputs from the session, run the search,
+            # and save every ranked match back into the session.
+            parsed = session["parsed"]
+            session["search_results"] = search_listings(
+                parsed["description"],
+                size=parsed["size"],
+                max_price=parsed["max_price"],
+            )
+
+            # This is the graded branch. With no item to style, explain what the
+            # user can change and stop before either model-powered tool runs.
+            if not session["search_results"]:
+                session["error"] = (
+                    "No matching listings were found. Try broader item keywords, "
+                    "remove the size filter, or increase the maximum price."
+                )
+                return session
+
+            # Step 5: The search tool ranks the best match first. Save that exact
+            # dictionary so the next two tools can read the same item from state.
+            session["selected_item"] = session["search_results"][0]
+            next_step = "suggest_outfit"
+
+        elif next_step == "suggest_outfit":
+            # Step 6: Read both inputs from the session, then store the model's
+            # outfit suggestion where the fit-card step can retrieve it.
+            session["outfit_suggestion"] = suggest_outfit(
+                session["selected_item"],
+                session["wardrobe"],
+            )
+            next_step = "create_fit_card"
+
+        elif next_step == "create_fit_card":
+            # Step 7: Use the saved outfit and the same selected item to create
+            # the final caption, then mark the loop as finished.
+            session["fit_card"] = create_fit_card(
+                session["outfit_suggestion"],
+                session["selected_item"],
+            )
+            next_step = None
+
+        else:
+            # This protects against a misspelled or unsupported planner state.
+            raise RuntimeError(f"Unknown planning step: {next_step}")
+
+    # Step 8: Return the complete, inspectable record of what the agent did.
     return session
 
 
