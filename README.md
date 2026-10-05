@@ -178,15 +178,52 @@ Channel effortless streetwear energy with these vintage Levi's 501 jeans, featur
 
 **Moment 1**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* I showed Codex my tool
+  contract and the different size formats in the data, including `M`, `S/M`,
+  `XL`, `US 8`, `US 8.5`, and `W30 L30`. I asked how to make matching ignore
+  capitalization without accidentally letting size `S` match the `S` in
+  `US 9`, or size `L` match `XL`.
+- *What came back:* Codex explained that a simple check such as
+  `requested_size in listing_size` would quietly return incorrect sizes. It
+  recommended converting sizes to a consistent format and matching complete
+  size options instead of individual letters. It also recommended cleaning the
+  description into useful keywords, applying the price and size filters before
+  scoring, ranking listings by the number of matching keywords, and returning
+  exactly `[]` when nothing matches.
+- *What I changed:* I added `_size_matches()` to handle letter, shoe, and waist
+  sizes without partial-letter mistakes. I added `_keyword_tokens()` to ignore
+  capitalization, punctuation, filler words, and simple plural differences.
+  The search now removes over-budget and wrong-size listings first, ranks the
+  remaining listings, and returns the original listing dictionaries in order.
+  I tested `S`, `M`, `US 8`, a maximum price, and an impossible search. These
+  changes help because the user now gets results that actually respect their
+  filters, and the agent receives a dependable empty list when it needs to stop.
 
 **Moment 2**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* I asked Codex how to
+  connect the three tools so the agent would continue after a successful search
+  but stop after an empty search. I also asked how to keep the selected item and
+  every later result visible so I could check that the same item moved through
+  the whole workflow.
+- *What came back:* Codex suggested using a `next_step` value to track which
+  part of the workflow should run, plus an iteration counter to stop a broken
+  loop from repeating forever. It suggested using regular expressions, which
+  are fixed text-matching rules, to separate the item description, size, and
+  maximum price without spending a model call. It also recommended saving each
+  result in the session and returning early with a useful message if search
+  returns `[]`.
+- *What I changed:* I added `_parse_query()` so a request such as
+  `vintage tee size M under $30` becomes a description, size `M`, and maximum
+  price `30.0`. I built a bounded planning loop that saves `search_results`,
+  `selected_item`, `outfit_suggestion`, and `fit_card` in the session, and each
+  tool reads its input back from that shared session. For the empty branch, I
+  added a message telling the user to broaden the keywords, remove the size, or
+  increase the budget, then stopped before either model-powered tool ran. I
+  tested both paths: the happy path completed all three tools with the same item
+  ID, while the empty path left `fit_card` as `None` and made zero model calls.
+  This makes the agent's decisions visible, testable, and less likely to waste
+  API requests.
 
 <!-- ═══════════════════════ UNIT 4 — THE TEST ═══════════════════════
 

@@ -173,8 +173,10 @@ def run_agent(query: str, wardrobe: dict) -> dict:
       • A handler for ModelUnavailable, so a bad key produces a message rather
         than a stack trace. The import is already at the top of this file.
     """
+
     # Step 1: Create one shared record for the entire request. Every step below
     # writes its output here, and the following step reads that value back out.
+    
     session = new_session(query, wardrobe)
     next_step = "parse_query"
     iteration_count = 0
