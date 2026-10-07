@@ -17,8 +17,9 @@ import re
 
 import config
 import trace
-from tools import search_listings, suggest_outfit, create_fit_card
 from generate import ModelUnavailable
+from mcp_client import call_tool
+from tools import create_fit_card, suggest_outfit
 
 
 # Common written size names are converted to the short labels used by the data.
@@ -197,10 +198,13 @@ def run_agent(query: str, wardrobe: dict) -> dict:
             # Step 4: Read the parsed inputs from the session, run the search,
             # and save every ranked match back into the session.
             parsed = session["parsed"]
-            session["search_results"] = search_listings(
-                parsed["description"],
-                size=parsed["size"],
-                max_price=parsed["max_price"],
+            session["search_results"] = call_tool(
+                "search_listings",
+                {
+                    "description": parsed["description"],
+                    "size": parsed["size"],
+                    "max_price": parsed["max_price"],
+                },
             )
 
             # This is the graded branch. With no item to style, explain what the
