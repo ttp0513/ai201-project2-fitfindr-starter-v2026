@@ -41,7 +41,13 @@
 
 <!-- Three or four sentences: what a user asks for, and what they get back. -->
 
-
+FitFindr helps a user search secondhand clothing listings by describing what
+they want and optionally including a size and maximum price. The agent parses
+the request, searches the listings, and selects the best matching item. When a
+match is found, it uses the user's wardrobe to suggest an outfit and creates a
+short fit-card caption that includes the item's price and platform. If nothing
+matches, it tells the user what they can change in their search and stops before
+running the outfit and fit-card tools.
 
 ---
 
@@ -144,8 +150,30 @@ flowchart TD
 **One full query**
 
 ```
-$ python app.py ask '...'
+$ .\.venv\Scripts\python.exe app.py ask 'vintage graphic tee size M under $30'
 
+  Found:    Y2K Baby Tee — Butterfly Print — $18.0 on depop
+
+  Outfit:   Outfit 1:
+- Top: Y2K Baby Tee — Butterfly Print
+- Bottoms: Baggy straight-leg jeans, dark wash
+- Shoes: Chunky white sneakers
+- Accessories: Black crossbody bag
+
+Why it works: The fitted crop of the baby tee balances the volume of the baggy dark-wash jeans, creating a classic Y2K proportion. The pink and purple butterfly graphic ties into the streetwear aesthetic of the sneakers and bag.
+
+Outfit 2:
+- Top: Y2K Baby Tee — Butterfly Print
+- Outerwear: Vintage black denim jacket
+- Bottoms: Wide-leg khaki trousers
+- Shoes: Black combat boots
+- Accessories: Brown leather belt
+
+Why it works: Layering the slightly cropped black denim jacket over the baby tee brings out the Y2K vibe while contrasting against the minimal khaki trousers. The combat boots add an edgy contrast to the soft butterfly graphic.
+
+  Fit card: Channel total early-2000s energy by styling this Y2K butterfly baby tee with baggy dark-wash jeans and chunky white sneakers for the ultimate nostalgic streetwear look. Available now for $18.00 on depop, this fitted gem adds a sweet pop of color to any casual rotation.
+
+0 model calls this session, 2 served from cache
 ```
 
 **The three tools, tested one at a time**
