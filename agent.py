@@ -18,6 +18,8 @@ import re
 import config
 import trace
 from generate import ModelUnavailable
+
+# search_listings crosses the MCP boundary; the other two tools stay local.
 from mcp_client import call_tool
 from tools import create_fit_card, suggest_outfit
 
@@ -88,6 +90,29 @@ def _parse_query(query: str) -> dict:
     }
 
 
+def _record_search_trace(parsed: dict, search_results: list[dict]) -> None:
+    """Record the MCP search result and the branch it will cause."""
+    if search_results:
+        note = (
+            f"matches found; first_result_id={search_results[0]['id']}; "
+            f"prices={[item['price'] for item in search_results]}; "
+            f"max_price={parsed['max_price']}"
+        )
+    else:
+        note = "branch: empty result, stopping"
+
+    trace.step(
+        "search_listings (via MCP)",
+        inputs=(
+            f"description={parsed['description']!r}; "
+            f"size={parsed['size']!r}; "
+            f"max_price={parsed['max_price']!r}"
+        ),
+        returned=search_results,
+        note=note,
+    )
+
+
 # ── session state ─────────────────────────────────────────────────────────────
 
 def new_session(query: str, wardrobe: dict) -> dict:
@@ -145,7 +170,7 @@ def run_agent(query: str, wardrobe: dict) -> dict:
          string splitting, or asking the model are all fine — say which you
          chose in your README. Put the result in session["parsed"].
 
-      4. Call search_listings() with what you parsed.
+      4. Call search_listings through MCP with what you parsed.
          Put the results in session["search_results"].
 
          ⚠️ THIS IS THE BRANCH. If nothing came back:
@@ -175,30 +200,39 @@ def run_agent(query: str, wardrobe: dict) -> dict:
         than a stack trace. The import is already at the top of this file.
     """
 
-    # Step 1: Create one shared record for the entire request. Every step below
-    # writes its output here, and the following step reads that value back out.
-    
+    # Every step reads from and writes to this shared session.
     session = new_session(query, wardrobe)
+
+    # Flow: parse → MCP search → stop or select → outfit → fit card.
     next_step = "parse_query"
     iteration_count = 0
 
     while next_step is not None:
-        # Step 2: Count every pass through the loop. The provided guard raises
-        # an error if a future bug causes the planner to repeat forever.
+        # Prevent a broken branch from looping forever.
         iteration_count += 1
         trace.check_iterations(iteration_count)
 
         if next_step == "parse_query":
-            # Step 3: Convert the user's sentence into the three inputs required
-            # by search_listings, then make those values visible in the session.
-            session["parsed"] = _parse_query(session["query"])
+            # Separate the clothing description from optional size and budget.
+            parsed = _parse_query(session["query"])
+            session["parsed"] = parsed
+
+            trace.step(
+                "parse_query",
+                inputs=session["query"],
+                returned=(
+                    f"description={parsed['description']!r}; "
+                    f"size={parsed['size']!r}; "
+                    f"max_price={parsed['max_price']!r}"
+                ),
+            )
+
             next_step = "search_listings"
 
         elif next_step == "search_listings":
-            # Step 4: Read the parsed inputs from the session, run the search,
-            # and save every ranked match back into the session.
+            # call_tool crosses MCP and returns a normal Python list of dicts.
             parsed = session["parsed"]
-            session["search_results"] = call_tool(
+            search_results = call_tool(
                 "search_listings",
                 {
                     "description": parsed["description"],
@@ -206,50 +240,104 @@ def run_agent(query: str, wardrobe: dict) -> dict:
                     "max_price": parsed["max_price"],
                 },
             )
+            session["search_results"] = search_results
+            _record_search_trace(parsed, search_results)
 
-            # This is the graded branch. With no item to style, explain what the
-            # user can change and stop before either model-powered tool runs.
-            if not session["search_results"]:
+            # No item means there is nothing for the later tools to style.
+            if not search_results:
                 session["error"] = (
                     "No matching listings were found. Try broader item keywords, "
                     "remove the size filter, or increase the maximum price."
                 )
                 return session
 
-            # Step 5: The search tool ranks the best match first. Save that exact
-            # dictionary so the next two tools can read the same item from state.
-            session["selected_item"] = session["search_results"][0]
+            selected_item = search_results[0]
+            session["selected_item"] = selected_item
+
+            trace.step(
+                "select_item",
+                inputs=f"first_result_id={search_results[0]['id']}",
+                returned=selected_item,
+                note=f"selected_item_id={selected_item['id']}",
+            )
+
             next_step = "suggest_outfit"
 
         elif next_step == "suggest_outfit":
-            # Step 6: Read both inputs from the session, then store the model's
-            # outfit suggestion where the fit-card step can retrieve it.
-            session["outfit_suggestion"] = suggest_outfit(
-                session["selected_item"],
-                session["wardrobe"],
+            selected_item = session["selected_item"]
+            wardrobe = session["wardrobe"]
+
+            outfit_inputs = (
+                f"selected_item_id={selected_item['id']}; "
+                f"wardrobe_items={len(wardrobe.get('items') or [])}"
             )
+
+            try:
+                outfit = suggest_outfit(selected_item, wardrobe)
+            except ModelUnavailable as exc:
+                session["error"] = (
+                    f"Could not create an outfit suggestion. {exc}"
+                )
+                trace.step(
+                    "suggest_outfit",
+                    inputs=outfit_inputs,
+                    note=f"model unavailable, stopping: {exc}",
+                )
+                return session
+
+            session["outfit_suggestion"] = outfit
+
+            trace.step(
+                "suggest_outfit",
+                inputs=outfit_inputs,
+                returned=outfit,
+            )
+
             next_step = "create_fit_card"
 
         elif next_step == "create_fit_card":
-            # Step 7: Use the saved outfit and the same selected item to create
-            # the final caption, then mark the loop as finished.
-            session["fit_card"] = create_fit_card(
-                session["outfit_suggestion"],
-                session["selected_item"],
+            selected_item = session["selected_item"]
+            outfit = session["outfit_suggestion"]
+
+            card_inputs = (
+                f"selected_item_id={selected_item['id']}; "
+                f"outfit_present={bool(outfit)}"
             )
+
+            try:
+                fit_card = create_fit_card(outfit, selected_item)
+            except ModelUnavailable as exc:
+                session["error"] = f"Could not create a fit card. {exc}"
+                trace.step(
+                    "create_fit_card",
+                    inputs=card_inputs,
+                    note=f"model unavailable, stopping: {exc}",
+                )
+                return session
+
+            session["fit_card"] = fit_card
+
+            trace.step(
+                "create_fit_card",
+                inputs=card_inputs,
+                returned=fit_card,
+                note="successful run complete",
+            )
+
             next_step = None
 
         else:
-            # This protects against a misspelled or unsupported planner state.
             raise RuntimeError(f"Unknown planning step: {next_step}")
 
-    # Step 8: Return the complete, inspectable record of what the agent did.
     return session
 
 
 # ── running it directly ───────────────────────────────────────────────────────
 
 def _show(session: dict) -> None:
+    # This is only a user-friendly summary. It deliberately does not print the
+    # complete search_results list or its Python type; inspect those separately
+    # when verifying the MCP return contract.
     if session["error"]:
         print(f"  stopped: {session['error']}")
         print(f"  fit_card is {session['fit_card']!r} — it should still be None here")
