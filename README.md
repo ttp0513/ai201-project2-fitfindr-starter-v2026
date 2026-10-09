@@ -334,22 +334,185 @@ that produced it:
 
 **Happy path**
 
+Command:
+
+```text
+python app.py ask 'vintage graphic tee size M under $30' --trace
 ```
 
+Output:
+
+```text
+[1] parse_query
+      in:  vintage graphic tee size M under $30
+      out: description='vintage graphic tee'; size='M'; max_price=30.0
+[2] search_listings (via MCP)
+      in:  description='vintage graphic tee'; size='M'; max_price=30.0
+      out: 8 items: Y2K Baby Tee — Butterfly Print, Mesh Long-Sleeve Top — Black, 90s Silk Slip Dress — Floral, Midi Length … +5 more
+      →    matches found; first_result_id=lst_002; prices=[18.0, 15.0, 30.0, 16.0, 18.0, 28.0, 25.0, 27.0]; max_price=30.0
+[3] select_item
+      in:  first_result_id=lst_002
+      out: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+      →    selected_item_id=lst_002
+[4] suggest_outfit
+      in:  selected_item_id=lst_002; wardrobe_items=10
+      out: Outfit 1: - Top: Y2K Baby Tee — Butterfly Print - Bottoms: Baggy straight-leg jeans, dark wash - Shoes: Chunky…
+[5] create_fit_card
+      in:  selected_item_id=lst_002; outfit_present=True
+      out: Channel peak Y2K energy by styling this adorable butterfly print baby tee with baggy dark-wash jeans and chunk…
+      →    successful run complete
+
+  Found:    Y2K Baby Tee — Butterfly Print — $18.0 on depop
+
+  Outfit:   Outfit 1:
+- Top: Y2K Baby Tee — Butterfly Print
+- Bottoms: Baggy straight-leg jeans, dark wash
+- Shoes: Chunky white sneakers
+- Accessories: Black crossbody bag
+
+Why it works: The fitted crop length of the baby tee balances the volume of the baggy dark-wash jeans, creating a classic Y2K high-low silhouette. The white in the tee ties directly into the chunky white sneakers for a cohesive look.
+
+Outfit 2:
+- Top: Y2K Baby Tee — Butterfly Print
+- Outerwear: Vintage black denim jacket
+- Bottoms: Wide-leg khaki trousers
+- Shoes: Black combat boots
+- Accessories: Brown leather belt
+
+Why it works: This look plays on the listing's unexpected cottagecore and Y2K mix by pairing the feminine butterfly tee with edgy black combat boots and a vintage denim jacket. The khaki trousers and brown belt ground the pink and purple graphic with earthy neutrals.
+
+  Fit card: Channel peak Y2K energy by styling this adorable butterfly print baby tee with baggy dark-wash jeans and chunky white sneakers for the ultimate high-low silhouette. You can grab this pristine vintage find for just $18.00 right now on depop.
+
+0 model calls this session, 2 served from cache
 ```
 
 **Empty search**
 
+Command:
+
+```text
+python app.py ask 'designer ballgown size XXS under $5' --trace
 ```
 
+Output:
+
+```text
+[1] parse_query
+      in:  designer ballgown size XXS under $5
+      out: description='designer ballgown'; size='XXS'; max_price=5.0
+[2] search_listings (via MCP)
+      in:  description='designer ballgown'; size='XXS'; max_price=5.0
+      out: [] (empty)
+      →    branch: empty result, stopping
+
+  No matching listings were found. Try broader item keywords, remove the size filter, or increase the maximum price.
+
+0 model calls this session
 ```
 
-**On the MCP move:** <!-- what changed in your code, and whether anything
-behaved differently afterwards. If the rewire didn't work, say exactly where it
-broke — the error text and the last thing that worked. That earns the point in
-full. -->
+**Empty wardrobe**
 
+Command:
 
+```text
+python app.py ask 'vintage graphic tee size M under $30' --empty-wardrobe --trace
+```
+
+Output:
+
+```text
+(running with an empty wardrobe)
+[1] parse_query
+      in:  vintage graphic tee size M under $30
+      out: description='vintage graphic tee'; size='M'; max_price=30.0
+[2] search_listings (via MCP)
+      in:  description='vintage graphic tee'; size='M'; max_price=30.0
+      out: 8 items: Y2K Baby Tee — Butterfly Print, Mesh Long-Sleeve Top — Black, 90s Silk Slip Dress — Floral, Midi Length … +5 more
+      →    matches found; first_result_id=lst_002; prices=[18.0, 15.0, 30.0, 16.0, 18.0, 28.0, 25.0, 27.0]; max_price=30.0
+[3] select_item
+      in:  first_result_id=lst_002
+      out: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+      →    selected_item_id=lst_002
+[4] suggest_outfit
+      in:  selected_item_id=lst_002; wardrobe_items=0
+      out: Since your wardrobe inventory is currently empty, here are two general ways you could style this Y2K butterfly…
+[5] create_fit_card
+      in:  selected_item_id=lst_002; outfit_present=True
+      out: Channel peak 2000s energy with this butterfly-print baby tee, perfect for styling with low-rise blue denim and…
+      →    successful run complete
+
+  Found:    Y2K Baby Tee — Butterfly Print — $18.0 on depop
+
+  Outfit:   Since your wardrobe inventory is currently empty, here are two general ways you could style this Y2K butterfly baby tee using versatile wardrobe staples:
+
+Option 1: Casual Streetwear
+Pair the baby tee with mid-rise or low-rise blue denim jeans and white retro sneakers. Accessorize with a small pink shoulder bag to tie in the graphic colors.
+
+Option 2: Y2K Leisure
+Wear the top with a black pleated tennis skirt, white ankle socks, and chunky platform sandals or loafers. Add a purple claw clip to complement the pastel tones in the print.
+
+  Fit card: Channel peak 2000s energy with this butterfly-print baby tee, perfect for styling with low-rise blue denim and retro sneakers for a casual streetwear vibe. Listed for $18.00 on depop, this cropped pastel find is ready for your next outfit rotation.
+
+2 model calls this session, 698 prompt + 177 output tokens
+```
+
+**Model unavailable**
+
+For this test, the model key was replaced with an intentionally invalid value
+and the response cache was disabled only for the test process. The real key was
+not written to the README or changed in `.env`.
+
+Command:
+
+```text
+python app.py ask 'vintage graphic tee size M under $30' --trace
+```
+
+Output:
+
+```text
+[1] parse_query
+      in:  vintage graphic tee size M under $30
+      out: description='vintage graphic tee'; size='M'; max_price=30.0
+[2] search_listings (via MCP)
+      in:  description='vintage graphic tee'; size='M'; max_price=30.0
+      out: 8 items: Y2K Baby Tee — Butterfly Print, Mesh Long-Sleeve Top — Black, 90s Silk Slip Dress — Floral, Midi Length … +5 more
+      →    matches found; first_result_id=lst_002; prices=[18.0, 15.0, 30.0, 16.0, 18.0, 28.0, 25.0, 27.0]; max_price=30.0
+[3] select_item
+      in:  first_result_id=lst_002
+      out: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+      →    selected_item_id=lst_002
+[4] suggest_outfit
+      in:  selected_item_id=lst_002; wardrobe_items=10
+      →    model unavailable, stopping: The model rejected your API key. Check GEMINI_API_KEY in your .env file, or create a fresh key at aistudio.google.com.
+
+  Could not create an outfit suggestion. The model rejected your API key. Check GEMINI_API_KEY in your .env file, or create a fresh key at aistudio.google.com.
+
+1 model calls this session
+```
+
+**On the MCP move:**
+
+Before this change, `agent.py` called `search_listings` directly from
+`tools.py`. After the change, the agent calls it through
+`mcp_client.call_tool`, which sends the request to the MCP server. The server
+runs `search_listings` and returns the result to the agent.
+
+The MCP move did not change the search behavior. A successful search still
+returns a Python list of listing dictionaries, while a search with no matches
+still returns exactly `[]`. Because that contract stayed the same, the planning
+loop can still stop on an empty list or select the first listing when matches
+are available.
+Before this change, `agent.py` called `search_listings` directly from
+`tools.py`. After the change, the agent calls it through
+`mcp_client.call_tool`, which sends the request to the MCP server. The server
+runs `search_listings` and returns the result to the agent.
+
+The extra MCP connection did not change the search behavior. A successful
+search still returns a Python list of listing dictionaries, and a search with
+no matches still returns exactly `[]`. The planning loop can therefore use the
+same branch: stop when the list is empty, or select the first listing when
+results are available.
 
 ---
 
