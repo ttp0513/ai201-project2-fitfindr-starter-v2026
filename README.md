@@ -273,19 +273,269 @@ Channel effortless streetwear energy with these vintage Levi's 501 jeans, featur
 
 | Criterion | Target | Try 1 | Try 2 | Try 3 | Try 4 | Try 5 | Verdict |
 |---|---|---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |  |  |
+| 1. Matching query completes all three tools | At least 4 of 5 | PASS | PASS | PASS | PASS | PASS | MET — 5/5 |
+| 2. Impossible query stops before the second tool | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET — 5/5 |
+| 3. Selected listing moves through the session unchanged | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET — 5/5 |
+| 4. Fit card includes essential details and stays caption-sized | At least 4 of 5 | PASS | PASS | PASS | PASS | PASS | MET — 5/5 |
+| 5. Search always respects the user's maximum price | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET — 5/5 |
 
-**Real output from one try**, pasted as text, naming the file and function
-that produced it:
+**Real output for each criterion**, using one try from each scenario and pasted as actual text:
+
+Source: `results/run_2026-10-08_2336_before.md`, produced by `run_eval.py::main` using the loop in `agent.py::run_agent`.
+
+Each excerpt below is Try 1 from its named scenario. The committed results file contains all five tries for every criterion.
+
+### Criterion 1 — Matching query completes all three tools
+
+**Try 1**
+
+- stopped early: no
+- selected_item: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+- search_results: 10
+
+Outfit suggestion:
 
 ```
+Outfit 1:
+- Top: Y2K Baby Tee — Butterfly Print
+- Bottoms: Baggy straight-leg jeans, dark wash
+- Shoes: Chunky white sneakers
+- Accessories: Black crossbody bag
 
+Why it works: The fitted crop length of the baby tee balances the voluminous proportions of the baggy dark wash jeans. The white in the sneakers ties directly into the white base of the tee, while the Y2K and streetwear aesthetics complement each other effortlessly.
+
+Outfit 2:
+- Top: Y2K Baby Tee — Butterfly Print
+- Outerwear: Vintage black denim jacket
+- Bottoms: Wide-leg khaki trousers
+- Shoes: Chunky white sneakers
+- Accessories: Brown leather belt
+
+Why it works: Layering the slightly cropped black denim jacket over the pink and purple butterfly tee adds structure while keeping the Y2K vibe intact. Pairing the fitted top with wide-leg khaki trousers creates a balanced contrast in silhouette, grounded by chunky white sneakers.
 ```
 
+Fit card:
+
+```
+Channel ultimate Y2K nostalgia with this adorable butterfly print baby tee, available now on depop for just $18.00. Style the fitted crop top with baggy dark wash jeans and chunky white sneakers for an effortless streetwear-inspired look, or layer it under a black denim jacket with wide-leg trousers.
+```
+
+Trace:
+
+```
+[1] parse_query
+      in:  vintage graphic tee under $30
+      out: description='vintage graphic tee'; size=None; max_price=30.0
+[2] search_listings (via MCP)
+      in:  description='vintage graphic tee'; size=None; max_price=30.0
+      out: 10 items: Y2K Baby Tee — Butterfly Print, Graphic Tee — 2003 Tour Bootleg Style, Vintage Band Tee — Faded Grey … +7 more
+      →    matches found; first_result_id=lst_002; prices=[18.0, 24.0, 19.0, 20.0, 26.0, 15.0, 22.0, 27.0, 30.0, 12.0]; max_price=30.0
+[3] select_item
+      in:  first_result_id=lst_002
+      out: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+      →    selected_item_id=lst_002
+[4] suggest_outfit
+      in:  selected_item_id=lst_002; wardrobe_items=10
+      out: Outfit 1: - Top: Y2K Baby Tee — Butterfly Print - Bottoms: Baggy straight-leg jeans, dark wash - Shoes: Chunky…
+[5] create_fit_card
+      in:  selected_item_id=lst_002; outfit_present=True
+      out: Channel ultimate Y2K nostalgia with this adorable butterfly print baby tee, available now on depop for just $1…
+      →    successful run complete
+```
+
+### Criterion 2 — Impossible query stops before the second tool
+
+**Try 1**
+
+- stopped early: yes — No matching listings were found. Try broader item keywords, remove the size filter, or increase the maximum price.
+- selected_item: (none)
+- search_results: 0
+
+Trace:
+
+```
+[1] parse_query
+      in:  designer ballgown size XXS under $5
+      out: description='designer ballgown'; size='XXS'; max_price=5.0
+[2] search_listings (via MCP)
+      in:  description='designer ballgown'; size='XXS'; max_price=5.0
+      out: [] (empty)
+      →    branch: empty result, stopping
+```
+
+### Criterion 3 — Selected listing moves through the session unchanged
+
+**Try 1**
+
+- stopped early: no
+- selected_item: 90s Track Jacket — Navy/White Stripe ($45.0, poshmark)
+- search_results: 3
+
+Outfit suggestion:
+
+```
+Outfit 1:
+- Top: White ribbed tank top
+- Bottoms: Baggy straight-leg jeans, dark wash
+- Shoes: Chunky white sneakers
+- Accessories: Black crossbody bag
+
+Why it works: The white ribbed tank anchors the sporty 90s track jacket when worn unzipped. The high-waisted baggy jeans match the jacket's streetwear aesthetic, while the chunky white sneakers and crossbody bag tie the athletic color palette and casual proportions together seamlessly.
+
+Outfit 2:
+- Bottoms: Wide-leg khaki trousers
+- Shoes: Chunky white sneakers
+- Accessories: Brown leather belt, Black crossbody bag
+
+Why it works: Layering the track jacket directly over the wide-leg khaki trousers creates a smart-casual contrast between athletic and minimal styles. The relaxed trousers balance the fitted medium size of the jacket, and the white sneakers coordinate with the jacket's white stripes for a clean finish.
+```
+
+Fit card:
+
+```
+Level up your streetwear rotation with this vintage Champion 90s track jacket, available now on poshmark for $45.00. Throw it unzipped over a white ribbed tank and baggy dark-wash jeans with chunky sneakers for the ultimate casual athletic vibe.
+```
+
+Trace:
+
+```
+[1] parse_query
+      in:  90s track jacket size M under $60
+      out: description='90s track jacket'; size='M'; max_price=60.0
+[2] search_listings (via MCP)
+      in:  description='90s track jacket'; size='M'; max_price=60.0
+      out: 3 items: 90s Track Jacket — Navy/White Stripe, 90s Silk Slip Dress — Floral, Midi Length, Shacket — Olive Canvas
+      →    matches found; first_result_id=lst_004; prices=[45.0, 30.0, 33.0]; max_price=60.0
+[3] select_item
+      in:  first_result_id=lst_004
+      out: 90s Track Jacket — Navy/White Stripe ($45.0, poshmark)
+      →    selected_item_id=lst_004
+[4] suggest_outfit
+      in:  selected_item_id=lst_004; wardrobe_items=10
+      out: Outfit 1: - Top: White ribbed tank top - Bottoms: Baggy straight-leg jeans, dark wash - Shoes: Chunky white sn…
+[5] create_fit_card
+      in:  selected_item_id=lst_004; outfit_present=True
+      out: Level up your streetwear rotation with this vintage Champion 90s track jacket, available now on poshmark for $…
+      →    successful run complete
+```
+
+### Criterion 4 — Fit card includes required details
+
+**Try 1**
+
+- stopped early: no
+- selected_item: Denim Jacket — Light Wash, Cropped ($42.0, poshmark)
+- search_results: 7
+
+Outfit suggestion:
+
+```
+Outfit 1:
+- Tops: White ribbed tank top
+- Bottoms: Baggy straight-leg jeans, dark wash
+- Outerwear: Denim Jacket — Light Wash, Cropped
+- Shoes: Chunky white sneakers
+- Accessories: Black crossbody bag
+
+Why it works: This look plays with a double-denim "Canadian tuxedo" concept while avoiding a matchy-matchy look by pairing the light wash jacket with dark wash jeans. The cropped length of the jacket balances the volume of the high-waisted, baggy straight-leg jeans, creating a defined waist. The fitted white tank top underneath adds a clean, minimal base that ties the blue tones and chunky white sneakers together.
+
+Outfit 2:
+- Tops: White ribbed tank top
+- Bottoms: Wide-leg khaki trousers
+- Outerwear: Denim Jacket — Light Wash, Cropped
+- Shoes: Black combat boots
+- Accessories: Brown leather belt
+
+Why it works: The light blue wash of the denim pairs naturally with earth-toned khaki, creating a classic casual contrast. Propertionally, the fitted white tank and cropped jacket keep the top half streamlined, which complements the volume of the wide-leg trousers. Finishing with black combat boots and a brown leather belt grounds the outfit with structured accessories.
+```
+
+Fit card:
+
+```
+Nail the double-denim trend with this vintage-inspired Wrangler cropped denim jacket, available now on poshmark for $42.00. Pair the light wash piece over a white ribbed tank with baggy dark wash jeans and chunky sneakers for an effortless streetwear look.
+```
+
+Trace:
+
+```
+[1] parse_query
+      in:  denim jacket under $50
+      out: description='denim jacket'; size=None; max_price=50.0
+[2] search_listings (via MCP)
+      in:  description='denim jacket'; size=None; max_price=50.0
+      out: 7 items: Denim Jacket — Light Wash, Cropped, Vintage Levi's 501 Jeans — Medium Wash, 90s Track Jacket — Navy/White Stripe … +4 more
+      →    matches found; first_result_id=lst_007; prices=[42.0, 38.0, 45.0, 24.0, 33.0, 30.0, 27.0]; max_price=50.0
+[3] select_item
+      in:  first_result_id=lst_007
+      out: Denim Jacket — Light Wash, Cropped ($42.0, poshmark)
+      →    selected_item_id=lst_007
+[4] suggest_outfit
+      in:  selected_item_id=lst_007; wardrobe_items=10
+      out: Outfit 1: - Tops: White ribbed tank top - Bottoms: Baggy straight-leg jeans, dark wash - Outerwear: Denim Jack…
+[5] create_fit_card
+      in:  selected_item_id=lst_007; outfit_present=True
+      out: Nail the double-denim trend with this vintage-inspired Wrangler cropped denim jacket, available now on poshmar…
+      →    successful run complete
+```
+
+### Criterion 5 — Search respects the maximum price
+
+**Try 1**
+
+- stopped early: no
+- selected_item: Platform Sneakers — White Chunky Sole ($48.0, poshmark)
+- search_results: 1
+
+Outfit suggestion:
+
+```
+Outfit 1:
+- Platform Sneakers — White Chunky Sole
+- Baggy straight-leg jeans, dark wash
+- White ribbed tank top
+- Vintage black denim jacket
+- Black crossbody bag
+
+Why it works: The Y2K platform sneakers pair naturally with baggy dark denim for an authentic late-90s streetwear silhouette. The fitted white ribbed tank balances the volume of the jeans and shoes, while the slightly cropped black denim jacket and crossbody bag anchor the monochrome upper half and complete the casual aesthetic.
+
+
+Outfit 2:
+- Platform Sneakers — White Chunky Sole
+- Wide-leg khaki trousers
+- Black cropped zip hoodie
+- Black crossbody bag
+
+Why it works: The chunky platform of the sneakers prevents the hem of the wide-leg khaki trousers from dragging while adding a retro edge to the minimal earth tones. Pairing the trousers with a black cropped zip hoodie creates a clean, balanced proportion that highlights the waist while keeping the streetwear vibe intact.
+```
+
+Fit card:
+
+```
+Channel ultimate late-90s streetwear energy by styling these chunky white platform sneakers with baggy dark-wash jeans, a ribbed tank, and a vintage black denim jacket for a balanced everyday look. You can find these retro kicks available now on poshmark for $48.00.
+```
+
+Trace:
+
+```
+[1] parse_query
+      in:  platform sneakers size 8 under $60
+      out: description='platform sneakers'; size='US 8'; max_price=60.0
+[2] search_listings (via MCP)
+      in:  description='platform sneakers'; size='US 8'; max_price=60.0
+      out: 1 items: Platform Sneakers — White Chunky Sole
+      →    matches found; first_result_id=lst_019; prices=[48.0]; max_price=60.0
+[3] select_item
+      in:  first_result_id=lst_019
+      out: Platform Sneakers — White Chunky Sole ($48.0, poshmark)
+      →    selected_item_id=lst_019
+[4] suggest_outfit
+      in:  selected_item_id=lst_019; wardrobe_items=10
+      out: Outfit 1: - Platform Sneakers — White Chunky Sole - Baggy straight-leg jeans, dark wash - White ribbed tank to…
+[5] create_fit_card
+      in:  selected_item_id=lst_019; outfit_present=True
+      out: Channel ultimate late-90s streetwear energy by styling these chunky white platform sneakers with baggy dark-wa…
+      →    successful run complete
+```
 ---
 
 ## Verdicts and Diagnoses
