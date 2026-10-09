@@ -558,21 +558,35 @@ Trace:
 
 | # | Criterion | Target | Verdict | How I decided |
 |---|---|---|---|---|
-| 1 | A matching query completes all three tools | At least 4 of 5 | **MET — 5/5** | Every try reached `search_listings`, `suggest_outfit`, and `create_fit_card`, then returned a non-empty fit card. |
-| 2 | An impossible query stops before the second tool | 5 of 5 | **MET — 5/5** | Every try returned an empty search list, stopped after the MCP search, and told the user to change the keywords, size, or price limit. |
-| 3 | The selected listing moves through the session unchanged | 5 of 5 | **MET — 5/5** | In every trace, the first result, selected item, and item sent to `suggest_outfit` all had the same ID, `lst_004`. |
-| 4 | The fit card includes essential details and stays caption-sized | At least 4 of 5 | **MET — 5/5** | All five fit cards were two or three sentences and included both the selected item's `$42.00` price and `poshmark` platform. |
-| 5 | Search always respects the user's maximum price | 5 of 5 | **MET — 5/5** | Every try used a `$60.00` ceiling and returned only a `$48.00` listing, so no result exceeded the parsed maximum price. |
+| 1 | A matching query completes all three tools | At least 4 of 5 | **MET - 5/5** | Every try reached `search_listings`, `suggest_outfit`, and `create_fit_card`, then returned a non-empty fit card. |
+| 2 | An impossible query stops before the second tool | 5 of 5 | **MET - 5/5** | Every try returned an empty search list, stopped after the MCP search, and told the user to change the keywords, size, or price limit. |
+| 3 | The selected listing moves through the session unchanged | 5 of 5 | **MET - 5/5** | In every trace, the first result, selected item, and item sent to `suggest_outfit` all had the same ID, `lst_004`. |
+| 4 | The fit card includes essential details and stays caption-sized | At least 4 of 5 | **MET - 5/5** | All five fit cards were two or three sentences and included both the selected item's `$42.00` price and `poshmark` platform. |
+| 5 | Search always respects the user's maximum price | 5 of 5 | **MET - 5/5** | Every try used a `$60.00` ceiling and returned only a `$48.00` listing, so no result exceeded the parsed maximum price. |
 
 **Diagnoses**
 
 No criterion missed its target, so there is no failed tool, branch, session
-handoff, or model output to diagnose in this baseline run. The evidence above
-still shows a product limitation rather than a test failure: the search tool
-returns several ranked listings, but the current planning loop automatically
-uses only the first one instead of letting the user compare options. I will
-keep that limitation separate from these verdicts because it was not part of
-the five acceptance criteria tested here.
+handoff, or model output to diagnose in this baseline run. However, the traces
+revealed a real search-quality weakness even though it did not cause a failed
+criterion. `vintage graphic tee` returned 10 listings, `90s track jacket`
+returned a silk slip dress and a shacket, and `denim jacket` returned jeans,
+shorts, and a vest. These partial matches appear because the keyword search can
+include a listing after matching only one word from a multi-word description.
+
+My intended improvement is to make multi-word searches require stronger
+keyword coverage, so results matching more of the user's description rank
+ahead of weak one-word matches or exclude those weak matches entirely. I will
+measure whether it helped by comparing the result lists and counts in the
+before and after traces, while also confirming that the original five criteria
+still pass. I am not changing the baseline results or creating a failure on
+purpose; this improvement comes directly from a limitation visible in the real
+baseline output.
+
+The planning loop also automatically uses the first ranked result instead of
+letting the user compare several options. I am saving that larger interaction
+change for `What's Still Broken` because it would require a new user-choice
+step and additional session state.
 
 ---
 
