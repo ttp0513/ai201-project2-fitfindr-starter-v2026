@@ -172,9 +172,14 @@ def search_listings(
             continue
 
         # A listing's score is the number of unique query words found in it.
-        # A zero score means the listing is unrelated and should be removed.
+        # One-word searches need one match. Multi-word searches need at least
+        # two, which removes weak results that happen to share only a broad
+        # word such as "vintage" or "jacket". Requiring every word would be
+        # too strict because thrift sellers often describe the same style with
+        # different wording.
         overlap = query_tokens & _keyword_tokens(_listing_text(listing))
-        if overlap:
+        minimum_matches = min(2, len(query_tokens))
+        if len(overlap) >= minimum_matches:
             scored_listings.append((len(overlap), original_position, listing))
 
     # Highest scores come first. original_position provides a stable tie-breaker
