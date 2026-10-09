@@ -884,11 +884,30 @@ rule even stricter could hide useful listings that use different wording.
 
 ## What's Still Broken
 
-<!-- For each criterion still missed: what you'd do, and why you stopped where
-     you did. "I ran out of time" is fine if it's true. Pretending nothing is
-     left is not. -->
+No acceptance criterion is still missed; both evaluation runs finished at 5
+of 5 for every row. However, passing those five checks does not mean the agent
+is ready for a real shopping product.
 
+1. **The user cannot compare results.** The MCP search returns a ranked list,
+   but `agent.py::run_agent` automatically sends the first item to
+   `suggest_outfit`. A real version should show the best few listings, let the
+   user choose, and store that choice in the session. I stopped here because
+   this would add a new interaction step rather than improve the existing loop.
 
+2. **Search still matches words, not meaning.** The new rule removed many weak
+   one-word matches, but `vintage graphic tee` still returns six results. It
+   may also miss a relevant listing that uses a synonym the user did not type.
+   A future version could add synonyms or semantic search, then measure both
+   precision and recall on a larger query set. I kept this project
+   deterministic and limited Milestone 5 to one measurable change.
+
+3. **Size rules live in two places.** `agent.py` interprets size text from the
+   query, while `tools.py` separately checks whether that size matches a
+   listing. If a new size format is added, the two modules could drift apart.
+   I would move normalization into one shared helper and add tests for formats
+   such as letter sizes, split sizes, shoe sizes, and waist sizes. I did not
+   include that refactor because the current formats passed every evaluation
+   and it was separate from the search-precision improvement.
 
 <!-- ═════════════════════════════════════════════════════════════════════
 
