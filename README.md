@@ -778,31 +778,107 @@ are available.
 
 ## The Improvement
 
-<!-- What you changed, why your diagnosis pointed at it, and the after-run in
-     the same table format. One change, measured properly.
+**What I changed:** I made `tools.py::search_listings` more selective.
 
-     `python run_eval.py --label after` -->
+- A one-word search still needs one matching word.
+- A search with two or more words now needs at least two matching words.
+- I did not require every word because sellers may describe the same item in
+  different ways.
 
-**What I changed:**
+For example, `denim jacket` used to return denim shorts because `denim` was
+enough to count as a match. Now an item must match both `denim` and `jacket`.
+The cropped denim jacket stays in the results, while the shorts, jeans, vest,
+track jacket, and shacket are removed.
 
-**Which failure it was meant to fix:**
+I also added `test_search.py`. Its five tests check the new matching rule,
+one-word searches, empty results, and the price limit.
+
+**Which problem it was meant to fix:** All five acceptance criteria passed,
+but the baseline search results were too broad:
+
+- `90s track jacket` returned a silk slip dress and a shacket.
+- `denim jacket` returned jeans, shorts, and a vest.
+- `vintage graphic tee` returned 10 listings.
+
+This happened because matching just one word was enough. The goal was to remove
+weak matches without breaking any behavior that already passed.
 
 ### Run Log - After
 
 | Criterion | Target | Try 1 | Try 2 | Try 3 | Try 4 | Try 5 | Verdict |
 |---|---|---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |  |  |
+| 1. Matching query completes all three tools | At least 4 of 5 | PASS | PASS | PASS | PASS | PASS | MET - 5/5 |
+| 2. Impossible query stops before the second tool | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET - 5/5 |
+| 3. Selected listing moves through the session unchanged | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET - 5/5 |
+| 4. Fit card includes essential details and stays caption-sized | At least 4 of 5 | PASS | PASS | PASS | PASS | PASS | MET - 5/5 |
+| 5. Search always respects the user's maximum price | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET - 5/5 |
 
-**Did it help, and how do I know:**
+**Real after-run evidence:**
 
-<!-- If it made things worse, say that. Honestly reported, that earns full
-     credit and is more interesting than one that worked. -->
+Source: `results/run_2026-10-09_0012_after.md`, produced by
+`run_eval.py::main` using `agent.py::run_agent`. These are actual trace lines
+from Try 1 of the relevant scenarios.
 
+```text
+Criterion 1 - matching query completes
+[2] search_listings (via MCP)
+      in:  description='vintage graphic tee'; size=None; max_price=30.0
+      out: 6 items: Y2K Baby Tee — Butterfly Print, Graphic Tee — 2003 Tour Bootleg Style, Vintage Band Tee — Faded Grey … +3 more
+      →    matches found; first_result_id=lst_002; prices=[18.0, 24.0, 19.0, 20.0, 26.0, 15.0]; max_price=30.0
 
+Criterion 2 - impossible query stops early
+[1] parse_query
+      in:  designer ballgown size XXS under $5
+      out: description='designer ballgown'; size='XXS'; max_price=5.0
+[2] search_listings (via MCP)
+      in:  description='designer ballgown'; size='XXS'; max_price=5.0
+      out: [] (empty)
+      →    branch: empty result, stopping
+
+Criterion 3 - selected item stays unchanged
+[2] search_listings (via MCP)
+      in:  description='90s track jacket'; size='M'; max_price=60.0
+      out: 1 items: 90s Track Jacket — Navy/White Stripe
+      →    matches found; first_result_id=lst_004; prices=[45.0]; max_price=60.0
+[3] select_item
+      in:  first_result_id=lst_004
+      →    selected_item_id=lst_004
+[4] suggest_outfit
+      in:  selected_item_id=lst_004; wardrobe_items=10
+
+Criterion 4 - fit card has required details
+[2] search_listings (via MCP)
+      in:  description='denim jacket'; size=None; max_price=50.0
+      out: 1 items: Denim Jacket — Light Wash, Cropped
+      →    matches found; first_result_id=lst_007; prices=[42.0]; max_price=50.0
+
+Fit card:
+Level up your streetwear rotation with this vintage Wrangler denim jacket, featuring sharp structured shoulders and endless customization potential. Pair the cropped light wash piece with a ribbed white tank, baggy dark wash jeans, and chunky sneakers for the ultimate contrast play. Grab this versatile layering staple for $42.00 before it drops on poshmark.
+
+Criterion 5 - search respects the maximum price
+[2] search_listings (via MCP)
+      in:  description='platform sneakers'; size='US 8'; max_price=60.0
+      out: 1 items: Platform Sneakers — White Chunky Sole
+      →    matches found; first_result_id=lst_019; prices=[48.0]; max_price=60.0
+```
+
+**Did it help, and how do I know:** Yes. The searches returned fewer weak
+matches:
+
+| Query | Before | After |
+|---|---:|---:|
+| `vintage graphic tee` | 10 results | 6 results |
+| `90s track jacket` | 3 results | 1 result |
+| `denim jacket` | 7 results | 1 result |
+
+The track-jacket and denim-jacket searches now return only the requested item.
+All five acceptance criteria also stayed at 5 of 5, so the change did not break
+the planning loop, empty-search branch, session state, fit cards, or price
+filter.
+
+Search is still not perfect. `vintage graphic tee` returns six results because
+some nearby items match two words, such as `vintage` and `graphic`. Making the
+rule even stricter could hide useful listings that use different wording.
 
 ---
 
