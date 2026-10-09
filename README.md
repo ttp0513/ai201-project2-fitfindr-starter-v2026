@@ -2,7 +2,7 @@
 
 > ### 👋 Start here
 >
-> **New to this repo? Read [RUNNING.md](RUNNING.md) first** — setup, every
+> **New to this repo? Read [RUNNING.md](RUNNING.md) first** - setup, every
 > command, and what to do when something breaks.
 >
 > Once `python test.py` passes:
@@ -24,7 +24,7 @@
      HOW TO USE THIS FILE
 
      This is your submission. Fill each section in as you finish the milestone
-     it belongs to — don't leave it all to the end.
+     it belongs to - don't leave it all to the end.
 
      Unit 3 asks for the first five sections. Unit 4 adds the five below them.
      Leave the unit 4 sections alone until then; they're here so you know
@@ -35,7 +35,7 @@
      gets none.
      ───────────────────────────────────────────────────────────────────────── -->
 
-<!-- ═══════════════════════ UNIT 3 — THE BUILD ═══════════════════════ -->
+<!-- ═══════════════════════ UNIT 3 - THE BUILD ═══════════════════════ -->
 
 ## What This Does
 
@@ -59,7 +59,7 @@ running the outfit and fit-card tools.
      "Returns a list" earns NOTHING. The description has to say what is IN
      the list.
 
-     The empty case isn't optional either — it's the thing your loop branches
+     The empty case isn't optional either - it's the thing your loop branches
      on, and if you don't decide it here you'll discover it as a crash in
      Milestone 5. -->
 
@@ -97,13 +97,13 @@ running the outfit and fit-card tools.
 
 ## Planning Loop
 
-<!-- Your branch rule, stated as a rule — the condition AND both paths — plus
+<!-- Your branch rule, stated as a rule - the condition AND both paths - plus
      the file and function that holds it.
 
      Like this:
        "If search_listings returns an empty list, put a message in the session
         and stop. Otherwise take the first result and go to suggest_outfit."
-        — agent.py::run_agent
+        - agent.py::run_agent
 
      The grader checks your code against what you claim here, so the file and
      function have to be real. -->
@@ -145,17 +145,17 @@ flowchart TD
 <!-- Two things go here.
 
      1. One FULL query and its output, pasted as text.
-     2. Your three per-tool terminal tests — the command and what it printed. -->
+     2. Your three per-tool terminal tests - the command and what it printed. -->
 
 **One full query**
 
 ```
 $ .\.venv\Scripts\python.exe app.py ask 'vintage graphic tee size M under $30'
 
-  Found:    Y2K Baby Tee — Butterfly Print — $18.0 on depop
+  Found:    Y2K Baby Tee - Butterfly Print - $18.0 on depop
 
   Outfit:   Outfit 1:
-- Top: Y2K Baby Tee — Butterfly Print
+- Top: Y2K Baby Tee - Butterfly Print
 - Bottoms: Baggy straight-leg jeans, dark wash
 - Shoes: Chunky white sneakers
 - Accessories: Black crossbody bag
@@ -163,7 +163,7 @@ $ .\.venv\Scripts\python.exe app.py ask 'vintage graphic tee size M under $30'
 Why it works: The fitted crop of the baby tee balances the volume of the baggy dark-wash jeans, creating a classic Y2K proportion. The pink and purple butterfly graphic ties into the streetwear aesthetic of the sneakers and bag.
 
 Outfit 2:
-- Top: Y2K Baby Tee — Butterfly Print
+- Top: Y2K Baby Tee - Butterfly Print
 - Outerwear: Vintage black denim jacket
 - Bottoms: Wide-leg khaki trousers
 - Shoes: Black combat boots
@@ -180,12 +180,12 @@ Why it works: Layering the slightly cropped black denim jacket over the baby tee
 
 ```
 $ .\.venv\Scripts\python.exe -c "from tools import search_listings; print([(item['title'], item['price']) for item in search_listings('graphic tee', max_price=30)])"
-[('Y2K Baby Tee — Butterfly Print', 18.0), ('Graphic Tee — 2003 Tour Bootleg Style', 24.0), ('Mesh Long-Sleeve Top — Black', 15.0), ('Vintage Band Tee — Faded Grey', 19.0), ('Low-Rise Cargo Pants — Khaki', 27.0), ('Oversized Crewneck Sweatshirt — Vintage Navy', 20.0), ('Vintage Graphic Hoodie — Faded Black', 26.0)]
+[('Y2K Baby Tee - Butterfly Print', 18.0), ('Graphic Tee - 2003 Tour Bootleg Style', 24.0), ('Mesh Long-Sleeve Top - Black', 15.0), ('Vintage Band Tee - Faded Grey', 19.0), ('Low-Rise Cargo Pants - Khaki', 27.0), ('Oversized Crewneck Sweatshirt - Vintage Navy', 20.0), ('Vintage Graphic Hoodie - Faded Black', 26.0)]
 ```
 
 ```
 $ .\.venv\Scripts\python.exe -c "from tools import suggest_outfit; from utils.data_loader import get_example_wardrobe, load_listings; print(' '.join(suggest_outfit(load_listings()[0], get_example_wardrobe()).split()))"
-Outfit 1: - Bottoms: Vintage Levi's 501 Jeans — Medium Wash - Tops: White ribbed tank top - Outerwear: Vintage black denim jacket - Shoes: Chunky white sneakers - Accessories: Black crossbody bag Why it works: The medium wash of the Levi's pairs effortlessly with the crisp white tank for a classic, minimal base. Adding the slightly cropped black denim jacket introduces a cool double-denim contrast without clashing, while the chunky white sneakers and black crossbody bag tie the streetwear aesthetic together. Outfit 2: - Bottoms: Vintage Levi's 501 Jeans — Medium Wash - Tops: Oversized grey crewneck sweatshirt - Shoes: Black combat boots - Accessories: Brown leather belt Why it works: The straight-leg fit of the 501s balances the heavy, hip-dropping proportions of the oversized grey crewneck. Tucking the front of the sweatshirt in with the brown leather belt adds definition, and the black combat boots ground the look with a touch of grunge edge.
+Outfit 1: - Bottoms: Vintage Levi's 501 Jeans - Medium Wash - Tops: White ribbed tank top - Outerwear: Vintage black denim jacket - Shoes: Chunky white sneakers - Accessories: Black crossbody bag Why it works: The medium wash of the Levi's pairs effortlessly with the crisp white tank for a classic, minimal base. Adding the slightly cropped black denim jacket introduces a cool double-denim contrast without clashing, while the chunky white sneakers and black crossbody bag tie the streetwear aesthetic together. Outfit 2: - Bottoms: Vintage Levi's 501 Jeans - Medium Wash - Tops: Oversized grey crewneck sweatshirt - Shoes: Black combat boots - Accessories: Brown leather belt Why it works: The straight-leg fit of the 501s balances the heavy, hip-dropping proportions of the oversized grey crewneck. Tucking the front of the sweatshirt in with the brown leather belt adds definition, and the black combat boots ground the look with a touch of grunge edge.
 ```
 
 ```
@@ -253,19 +253,19 @@ Channel effortless streetwear energy with these vintage Levi's 501 jeans, featur
   This makes the agent's decisions visible, testable, and less likely to waste
   API requests.
 
-<!-- ═══════════════════════ UNIT 4 — THE TEST ═══════════════════════
+<!-- ═══════════════════════ UNIT 4 - THE TEST ═══════════════════════
 
      Don't fill these in during unit 3.
      ═══════════════════════════════════════════════════════════════════ -->
 
 ---
 
-## Run Log — Before
+## Run Log - Before
 
 <!-- Five criteria, five tries each, in this exact format.
 
      Five, because your criteria are written out of five. Mark each try PASS
-     or FAIL, count the passes, and read that count against your target — a
+     or FAIL, count the passes, and read that count against your target - a
      row targeting 4 of 5 with three PASS cells is MISSED (3/5).
 
      `python run_eval.py --label before` runs everything and writes the table
@@ -273,11 +273,11 @@ Channel effortless streetwear energy with these vintage Levi's 501 jeans, featur
 
 | Criterion | Target | Try 1 | Try 2 | Try 3 | Try 4 | Try 5 | Verdict |
 |---|---|---|---|---|---|---|---|
-| 1. Matching query completes all three tools | At least 4 of 5 | PASS | PASS | PASS | PASS | PASS | MET — 5/5 |
-| 2. Impossible query stops before the second tool | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET — 5/5 |
-| 3. Selected listing moves through the session unchanged | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET — 5/5 |
-| 4. Fit card includes essential details and stays caption-sized | At least 4 of 5 | PASS | PASS | PASS | PASS | PASS | MET — 5/5 |
-| 5. Search always respects the user's maximum price | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET — 5/5 |
+| 1. Matching query completes all three tools | At least 4 of 5 | PASS | PASS | PASS | PASS | PASS | MET - 5/5 |
+| 2. Impossible query stops before the second tool | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET - 5/5 |
+| 3. Selected listing moves through the session unchanged | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET - 5/5 |
+| 4. Fit card includes essential details and stays caption-sized | At least 4 of 5 | PASS | PASS | PASS | PASS | PASS | MET - 5/5 |
+| 5. Search always respects the user's maximum price | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET - 5/5 |
 
 **Real output for each criterion**, using one try from each scenario and pasted as actual text:
 
@@ -285,19 +285,19 @@ Source: `results/run_2026-10-08_2336_before.md`, produced by `run_eval.py::main`
 
 Each excerpt below is Try 1 from its named scenario. The committed results file contains all five tries for every criterion.
 
-### Criterion 1 — Matching query completes all three tools
+### Criterion 1 - Matching query completes all three tools
 
 **Try 1**
 
 - stopped early: no
-- selected_item: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+- selected_item: Y2K Baby Tee - Butterfly Print ($18.0, depop)
 - search_results: 10
 
 Outfit suggestion:
 
 ```
 Outfit 1:
-- Top: Y2K Baby Tee — Butterfly Print
+- Top: Y2K Baby Tee - Butterfly Print
 - Bottoms: Baggy straight-leg jeans, dark wash
 - Shoes: Chunky white sneakers
 - Accessories: Black crossbody bag
@@ -305,7 +305,7 @@ Outfit 1:
 Why it works: The fitted crop length of the baby tee balances the voluminous proportions of the baggy dark wash jeans. The white in the sneakers ties directly into the white base of the tee, while the Y2K and streetwear aesthetics complement each other effortlessly.
 
 Outfit 2:
-- Top: Y2K Baby Tee — Butterfly Print
+- Top: Y2K Baby Tee - Butterfly Print
 - Outerwear: Vintage black denim jacket
 - Bottoms: Wide-leg khaki trousers
 - Shoes: Chunky white sneakers
@@ -328,26 +328,26 @@ Trace:
       out: description='vintage graphic tee'; size=None; max_price=30.0
 [2] search_listings (via MCP)
       in:  description='vintage graphic tee'; size=None; max_price=30.0
-      out: 10 items: Y2K Baby Tee — Butterfly Print, Graphic Tee — 2003 Tour Bootleg Style, Vintage Band Tee — Faded Grey … +7 more
+      out: 10 items: Y2K Baby Tee - Butterfly Print, Graphic Tee - 2003 Tour Bootleg Style, Vintage Band Tee - Faded Grey … +7 more
       →    matches found; first_result_id=lst_002; prices=[18.0, 24.0, 19.0, 20.0, 26.0, 15.0, 22.0, 27.0, 30.0, 12.0]; max_price=30.0
 [3] select_item
       in:  first_result_id=lst_002
-      out: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+      out: Y2K Baby Tee - Butterfly Print ($18.0, depop)
       →    selected_item_id=lst_002
 [4] suggest_outfit
       in:  selected_item_id=lst_002; wardrobe_items=10
-      out: Outfit 1: - Top: Y2K Baby Tee — Butterfly Print - Bottoms: Baggy straight-leg jeans, dark wash - Shoes: Chunky…
+      out: Outfit 1: - Top: Y2K Baby Tee - Butterfly Print - Bottoms: Baggy straight-leg jeans, dark wash - Shoes: Chunky…
 [5] create_fit_card
       in:  selected_item_id=lst_002; outfit_present=True
       out: Channel ultimate Y2K nostalgia with this adorable butterfly print baby tee, available now on depop for just $1…
       →    successful run complete
 ```
 
-### Criterion 2 — Impossible query stops before the second tool
+### Criterion 2 - Impossible query stops before the second tool
 
 **Try 1**
 
-- stopped early: yes — No matching listings were found. Try broader item keywords, remove the size filter, or increase the maximum price.
+- stopped early: yes - No matching listings were found. Try broader item keywords, remove the size filter, or increase the maximum price.
 - selected_item: (none)
 - search_results: 0
 
@@ -363,12 +363,12 @@ Trace:
       →    branch: empty result, stopping
 ```
 
-### Criterion 3 — Selected listing moves through the session unchanged
+### Criterion 3 - Selected listing moves through the session unchanged
 
 **Try 1**
 
 - stopped early: no
-- selected_item: 90s Track Jacket — Navy/White Stripe ($45.0, poshmark)
+- selected_item: 90s Track Jacket - Navy/White Stripe ($45.0, poshmark)
 - search_results: 3
 
 Outfit suggestion:
@@ -404,11 +404,11 @@ Trace:
       out: description='90s track jacket'; size='M'; max_price=60.0
 [2] search_listings (via MCP)
       in:  description='90s track jacket'; size='M'; max_price=60.0
-      out: 3 items: 90s Track Jacket — Navy/White Stripe, 90s Silk Slip Dress — Floral, Midi Length, Shacket — Olive Canvas
+      out: 3 items: 90s Track Jacket - Navy/White Stripe, 90s Silk Slip Dress - Floral, Midi Length, Shacket - Olive Canvas
       →    matches found; first_result_id=lst_004; prices=[45.0, 30.0, 33.0]; max_price=60.0
 [3] select_item
       in:  first_result_id=lst_004
-      out: 90s Track Jacket — Navy/White Stripe ($45.0, poshmark)
+      out: 90s Track Jacket - Navy/White Stripe ($45.0, poshmark)
       →    selected_item_id=lst_004
 [4] suggest_outfit
       in:  selected_item_id=lst_004; wardrobe_items=10
@@ -419,12 +419,12 @@ Trace:
       →    successful run complete
 ```
 
-### Criterion 4 — Fit card includes required details
+### Criterion 4 - Fit card includes required details
 
 **Try 1**
 
 - stopped early: no
-- selected_item: Denim Jacket — Light Wash, Cropped ($42.0, poshmark)
+- selected_item: Denim Jacket - Light Wash, Cropped ($42.0, poshmark)
 - search_results: 7
 
 Outfit suggestion:
@@ -433,7 +433,7 @@ Outfit suggestion:
 Outfit 1:
 - Tops: White ribbed tank top
 - Bottoms: Baggy straight-leg jeans, dark wash
-- Outerwear: Denim Jacket — Light Wash, Cropped
+- Outerwear: Denim Jacket - Light Wash, Cropped
 - Shoes: Chunky white sneakers
 - Accessories: Black crossbody bag
 
@@ -442,7 +442,7 @@ Why it works: This look plays with a double-denim "Canadian tuxedo" concept whil
 Outfit 2:
 - Tops: White ribbed tank top
 - Bottoms: Wide-leg khaki trousers
-- Outerwear: Denim Jacket — Light Wash, Cropped
+- Outerwear: Denim Jacket - Light Wash, Cropped
 - Shoes: Black combat boots
 - Accessories: Brown leather belt
 
@@ -463,11 +463,11 @@ Trace:
       out: description='denim jacket'; size=None; max_price=50.0
 [2] search_listings (via MCP)
       in:  description='denim jacket'; size=None; max_price=50.0
-      out: 7 items: Denim Jacket — Light Wash, Cropped, Vintage Levi's 501 Jeans — Medium Wash, 90s Track Jacket — Navy/White Stripe … +4 more
+      out: 7 items: Denim Jacket - Light Wash, Cropped, Vintage Levi's 501 Jeans - Medium Wash, 90s Track Jacket - Navy/White Stripe … +4 more
       →    matches found; first_result_id=lst_007; prices=[42.0, 38.0, 45.0, 24.0, 33.0, 30.0, 27.0]; max_price=50.0
 [3] select_item
       in:  first_result_id=lst_007
-      out: Denim Jacket — Light Wash, Cropped ($42.0, poshmark)
+      out: Denim Jacket - Light Wash, Cropped ($42.0, poshmark)
       →    selected_item_id=lst_007
 [4] suggest_outfit
       in:  selected_item_id=lst_007; wardrobe_items=10
@@ -478,19 +478,19 @@ Trace:
       →    successful run complete
 ```
 
-### Criterion 5 — Search respects the maximum price
+### Criterion 5 - Search respects the maximum price
 
 **Try 1**
 
 - stopped early: no
-- selected_item: Platform Sneakers — White Chunky Sole ($48.0, poshmark)
+- selected_item: Platform Sneakers - White Chunky Sole ($48.0, poshmark)
 - search_results: 1
 
 Outfit suggestion:
 
 ```
 Outfit 1:
-- Platform Sneakers — White Chunky Sole
+- Platform Sneakers - White Chunky Sole
 - Baggy straight-leg jeans, dark wash
 - White ribbed tank top
 - Vintage black denim jacket
@@ -500,7 +500,7 @@ Why it works: The Y2K platform sneakers pair naturally with baggy dark denim for
 
 
 Outfit 2:
-- Platform Sneakers — White Chunky Sole
+- Platform Sneakers - White Chunky Sole
 - Wide-leg khaki trousers
 - Black cropped zip hoodie
 - Black crossbody bag
@@ -522,15 +522,15 @@ Trace:
       out: description='platform sneakers'; size='US 8'; max_price=60.0
 [2] search_listings (via MCP)
       in:  description='platform sneakers'; size='US 8'; max_price=60.0
-      out: 1 items: Platform Sneakers — White Chunky Sole
+      out: 1 items: Platform Sneakers - White Chunky Sole
       →    matches found; first_result_id=lst_019; prices=[48.0]; max_price=60.0
 [3] select_item
       in:  first_result_id=lst_019
-      out: Platform Sneakers — White Chunky Sole ($48.0, poshmark)
+      out: Platform Sneakers - White Chunky Sole ($48.0, poshmark)
       →    selected_item_id=lst_019
 [4] suggest_outfit
       in:  selected_item_id=lst_019; wardrobe_items=10
-      out: Outfit 1: - Platform Sneakers — White Chunky Sole - Baggy straight-leg jeans, dark wash - White ribbed tank to…
+      out: Outfit 1: - Platform Sneakers - White Chunky Sole - Baggy straight-leg jeans, dark wash - White ribbed tank to…
 [5] create_fit_card
       in:  selected_item_id=lst_019; outfit_present=True
       out: Channel ultimate late-90s streetwear energy by styling these chunky white platform sneakers with baggy dark-wa…
@@ -543,8 +543,8 @@ Trace:
 <!-- MET or MISSED per criterion against LAST UNIT's target, plus a sentence on
      how you decided.
 
-     Then, for every miss: which of the four places it happened — a tool, the
-     loop's branch, the session, or the model's output — AND the mechanism.
+     Then, for every miss: which of the four places it happened - a tool, the
+     loop's branch, the session, or the model's output - AND the mechanism.
 
      Not a diagnosis:  "The fit card was bad."
      A diagnosis:      "The fit card criterion missed on 2 of 5 items. Both had
@@ -579,7 +579,7 @@ Trace:
 
      Worth pasting BOTH the happy path and the empty-search path. The empty
      one should be visibly shorter, because it stops. If your two traces are
-     the same length, your branch isn't working — and this is the fastest way
+     the same length, your branch isn't working - and this is the fastest way
      anyone will ever find that out. -->
 
 **Happy path**
@@ -598,24 +598,24 @@ Output:
       out: description='vintage graphic tee'; size='M'; max_price=30.0
 [2] search_listings (via MCP)
       in:  description='vintage graphic tee'; size='M'; max_price=30.0
-      out: 8 items: Y2K Baby Tee — Butterfly Print, Mesh Long-Sleeve Top — Black, 90s Silk Slip Dress — Floral, Midi Length … +5 more
+      out: 8 items: Y2K Baby Tee - Butterfly Print, Mesh Long-Sleeve Top - Black, 90s Silk Slip Dress - Floral, Midi Length … +5 more
       →    matches found; first_result_id=lst_002; prices=[18.0, 15.0, 30.0, 16.0, 18.0, 28.0, 25.0, 27.0]; max_price=30.0
 [3] select_item
       in:  first_result_id=lst_002
-      out: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+      out: Y2K Baby Tee - Butterfly Print ($18.0, depop)
       →    selected_item_id=lst_002
 [4] suggest_outfit
       in:  selected_item_id=lst_002; wardrobe_items=10
-      out: Outfit 1: - Top: Y2K Baby Tee — Butterfly Print - Bottoms: Baggy straight-leg jeans, dark wash - Shoes: Chunky…
+      out: Outfit 1: - Top: Y2K Baby Tee - Butterfly Print - Bottoms: Baggy straight-leg jeans, dark wash - Shoes: Chunky…
 [5] create_fit_card
       in:  selected_item_id=lst_002; outfit_present=True
       out: Channel peak Y2K energy by styling this adorable butterfly print baby tee with baggy dark-wash jeans and chunk…
       →    successful run complete
 
-  Found:    Y2K Baby Tee — Butterfly Print — $18.0 on depop
+  Found:    Y2K Baby Tee - Butterfly Print - $18.0 on depop
 
   Outfit:   Outfit 1:
-- Top: Y2K Baby Tee — Butterfly Print
+- Top: Y2K Baby Tee - Butterfly Print
 - Bottoms: Baggy straight-leg jeans, dark wash
 - Shoes: Chunky white sneakers
 - Accessories: Black crossbody bag
@@ -623,7 +623,7 @@ Output:
 Why it works: The fitted crop length of the baby tee balances the volume of the baggy dark-wash jeans, creating a classic Y2K high-low silhouette. The white in the tee ties directly into the chunky white sneakers for a cohesive look.
 
 Outfit 2:
-- Top: Y2K Baby Tee — Butterfly Print
+- Top: Y2K Baby Tee - Butterfly Print
 - Outerwear: Vintage black denim jacket
 - Bottoms: Wide-leg khaki trousers
 - Shoes: Black combat boots
@@ -677,11 +677,11 @@ Output:
       out: description='vintage graphic tee'; size='M'; max_price=30.0
 [2] search_listings (via MCP)
       in:  description='vintage graphic tee'; size='M'; max_price=30.0
-      out: 8 items: Y2K Baby Tee — Butterfly Print, Mesh Long-Sleeve Top — Black, 90s Silk Slip Dress — Floral, Midi Length … +5 more
+      out: 8 items: Y2K Baby Tee - Butterfly Print, Mesh Long-Sleeve Top - Black, 90s Silk Slip Dress - Floral, Midi Length … +5 more
       →    matches found; first_result_id=lst_002; prices=[18.0, 15.0, 30.0, 16.0, 18.0, 28.0, 25.0, 27.0]; max_price=30.0
 [3] select_item
       in:  first_result_id=lst_002
-      out: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+      out: Y2K Baby Tee - Butterfly Print ($18.0, depop)
       →    selected_item_id=lst_002
 [4] suggest_outfit
       in:  selected_item_id=lst_002; wardrobe_items=0
@@ -691,7 +691,7 @@ Output:
       out: Channel peak 2000s energy with this butterfly-print baby tee, perfect for styling with low-rise blue denim and…
       →    successful run complete
 
-  Found:    Y2K Baby Tee — Butterfly Print — $18.0 on depop
+  Found:    Y2K Baby Tee - Butterfly Print - $18.0 on depop
 
   Outfit:   Since your wardrobe inventory is currently empty, here are two general ways you could style this Y2K butterfly baby tee using versatile wardrobe staples:
 
@@ -726,11 +726,11 @@ Output:
       out: description='vintage graphic tee'; size='M'; max_price=30.0
 [2] search_listings (via MCP)
       in:  description='vintage graphic tee'; size='M'; max_price=30.0
-      out: 8 items: Y2K Baby Tee — Butterfly Print, Mesh Long-Sleeve Top — Black, 90s Silk Slip Dress — Floral, Midi Length … +5 more
+      out: 8 items: Y2K Baby Tee - Butterfly Print, Mesh Long-Sleeve Top - Black, 90s Silk Slip Dress - Floral, Midi Length … +5 more
       →    matches found; first_result_id=lst_002; prices=[18.0, 15.0, 30.0, 16.0, 18.0, 28.0, 25.0, 27.0]; max_price=30.0
 [3] select_item
       in:  first_result_id=lst_002
-      out: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+      out: Y2K Baby Tee - Butterfly Print ($18.0, depop)
       →    selected_item_id=lst_002
 [4] suggest_outfit
       in:  selected_item_id=lst_002; wardrobe_items=10
@@ -777,7 +777,7 @@ results are available.
 
 **Which failure it was meant to fix:**
 
-### Run Log — After
+### Run Log - After
 
 | Criterion | Target | Try 1 | Try 2 | Try 3 | Try 4 | Try 5 | Verdict |
 |---|---|---|---|---|---|---|---|
@@ -806,7 +806,7 @@ results are available.
 
 <!-- ═════════════════════════════════════════════════════════════════════
 
-     SUBMISSION CHECKLIST — unit 3
+     SUBMISSION CHECKLIST - unit 3
 
        [ ] criteria.md has five numbered criteria, each with a target
        [ ] Each criterion has a reason underneath it
@@ -816,20 +816,20 @@ results are available.
        [ ] Planning Loop names the branch rule and agent.py::run_agent
        [ ] Sample Run: one full query plus the three per-tool tests, as text
        [ ] At least four new commits
-       [ ] Repository URL submitted — WRITE IT DOWN, you submit the same one
+       [ ] Repository URL submitted - WRITE IT DOWN, you submit the same one
            next unit
 
-     SUBMISSION CHECKLIST — unit 4
+     SUBMISSION CHECKLIST - unit 4
 
        [ ] mcp_server.py exists with one tool registered
            (or a written record of exactly where the rewire broke)
-       [ ] Run Log — Before, five criteria, five tries each
+       [ ] Run Log - Before, five criteria, five tries each
        [ ] Real output pasted underneath, naming file and function
        [ ] A verdict on every criterion
        [ ] A diagnosis for every miss, naming a place AND a mechanism
        [ ] Loop Trace, with the MCP call visible in it
        [ ] All three failure modes triggered and handled
-       [ ] One improvement, with Run Log — After in the same format
+       [ ] One improvement, with Run Log - After in the same format
        [ ] What's Still Broken
        [ ] At least four new commits
        [ ] The SAME repository URL as last unit
