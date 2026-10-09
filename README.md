@@ -253,6 +253,43 @@ Channel effortless streetwear energy with these vintage Levi's 501 jeans, featur
   This makes the agent's decisions visible, testable, and less likely to waste
   API requests.
 
+### Unit 4 update
+
+**Moment 3**
+
+- *What I asked for:* I asked Codex to help me make the planning loop visible
+  after moving `search_listings` behind MCP. I also asked how to test an empty
+  search, an empty wardrobe, and an unavailable model without letting one
+  failure trigger tools that no longer had valid input.
+- *What came back:* Codex recommended tracing the input and output of each
+  planning step, showing that search crossed MCP, and recording why the loop
+  stopped. It explained that an empty search should stop before
+  `suggest_outfit`, while a model error during `suggest_outfit` should stop
+  before `create_fit_card`.
+- *What I changed:* I added trace entries for parsing, MCP search, item
+  selection, outfit generation, and fit-card creation. I also caught
+  `ModelUnavailable` around both model-powered tools and saved a readable error
+  in the session. I ran all three failure paths and pasted the real output into
+  the README. This let me prove that the happy path has five steps while the
+  empty and failed paths stop at the correct point.
+
+**Moment 4**
+
+- *What I asked for:* After all five baseline criteria passed, I asked whether
+  I should create an error just to have something to improve. I wanted a real
+  change supported by the evaluation instead of a made-up failure.
+- *What came back:* Codex advised me not to manufacture a failure and pointed
+  to a pattern in the traces: multi-word searches included listings that
+  matched only one broad word. For example, `denim jacket` returned jeans,
+  shorts, and a vest. It suggested requiring stronger keyword coverage and
+  measuring the result counts before and after.
+- *What I changed:* I updated `search_listings` so one-word searches still need
+  one match, while multi-word searches need at least two matching words. I
+  chose two rather than every word so different seller wording can still
+  match. I also added five regression tests and reran all 25 evaluation tries.
+  `90s track jacket` improved from three results to one, `denim jacket`
+  improved from seven to one, and every original criterion stayed at 5 of 5.
+
 <!-- ═══════════════════════ UNIT 4 - THE TEST ═══════════════════════
 
      Don't fill these in during unit 3.
