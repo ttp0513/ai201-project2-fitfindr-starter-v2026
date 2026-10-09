@@ -65,7 +65,7 @@ running the outfit and fit-card tools.
 
 ### `search_listings`
 
-- **What it does:** Searches the local listings for description keywords, then optionally filters the results by size and an inclusive maximum price without calling the model.
+- **What it does:** Searches the local listings for description keywords, then optionally filters the results by size and an inclusive maximum price without calling the model. A one-word search needs one matching keyword, while a search with two or more words needs at least two matching keywords.
 - **Inputs:** 
   - `description` (`str`) contains the requested item keywords;
   -  `size` (`str | None`) is an optional, case-insensitive size filter; 
@@ -180,7 +180,7 @@ Why it works: Layering the slightly cropped black denim jacket over the baby tee
 
 ```
 $ .\.venv\Scripts\python.exe -c "from tools import search_listings; print([(item['title'], item['price']) for item in search_listings('graphic tee', max_price=30)])"
-[('Y2K Baby Tee - Butterfly Print', 18.0), ('Graphic Tee - 2003 Tour Bootleg Style', 24.0), ('Mesh Long-Sleeve Top - Black', 15.0), ('Vintage Band Tee - Faded Grey', 19.0), ('Low-Rise Cargo Pants - Khaki', 27.0), ('Oversized Crewneck Sweatshirt - Vintage Navy', 20.0), ('Vintage Graphic Hoodie - Faded Black', 26.0)]
+[('Y2K Baby Tee — Butterfly Print', 18.0), ('Graphic Tee — 2003 Tour Bootleg Style', 24.0), ('Mesh Long-Sleeve Top — Black', 15.0), ('Vintage Band Tee — Faded Grey', 19.0)]
 ```
 
 ```
