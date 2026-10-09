@@ -275,20 +275,39 @@ Channel effortless streetwear energy with these vintage Levi's 501 jeans, featur
 
 **Moment 4**
 
-- *What I asked for:* After all five baseline criteria passed, I asked whether
-  I should create an error just to have something to improve. I wanted a real
-  change supported by the evaluation instead of a made-up failure.
-- *What came back:* Codex advised me not to manufacture a failure and pointed
-  to a pattern in the traces: multi-word searches included listings that
-  matched only one broad word. For example, `denim jacket` returned jeans,
-  shorts, and a vest. It suggested requiring stronger keyword coverage and
-  measuring the result counts before and after.
-- *What I changed:* I updated `search_listings` so one-word searches still need
-  one match, while multi-word searches need at least two matching words. I
-  chose two rather than every word so different seller wording can still
-  match. I also added five regression tests and reran all 25 evaluation tries.
-  `90s track jacket` improved from three results to one, `denim jacket`
-  improved from seven to one, and every original criterion stayed at 5 of 5.
+- *What I asked for:* I changed one character in my Gemini API key to test the
+  model-unavailable path, but the agent still returned an outfit. I asked
+  Codex why the bad key did not cause a failure and what `served from cache`
+  meant.
+- *What came back:* Codex explained that the project saves model responses for
+  repeated prompts. When the same prompt is used again, the saved response is
+  returned without contacting Gemini, so the invalid key is never checked. It
+  also explained that a key already set in the PowerShell environment can take
+  priority over the value in `.env`.
+- *What I changed:* I disabled the response cache for one test process, used a
+  temporary invalid key, and ran a matching query so the loop had to reach
+  `suggest_outfit`. The trace showed parsing, MCP search, and item selection,
+  followed by `model unavailable, stopping`. The agent displayed a readable
+  API-key message, did not call `create_fit_card`, and did not show a raw stack
+  trace. The temporary environment values ended with the test, so my real key
+  in `.env` was not changed or exposed.
+
+  **Moment 5**
+
+- *What I asked for:* I asked Codex to add tracing to `agent.py` and include
+  comments that would help me understand the planning loop.
+- *What came back:* The first version worked, but it added a long explanation
+  beside almost every assignment and branch. The comments repeated what the
+  code already said, which made the loop harder for me to scan and understand.
+  It met the tracing requirement but did not meet my readability goal.
+- *What I changed:* I asked Codex to simplify the explanation and reorganize
+  the code. I kept one short comment showing the overall flow, used brief
+  comments only where they explain *why* something happens, and moved the MCP
+  search-trace formatting into `_record_search_trace()`. The final loop still
+  records all five steps and the failure branches, but the control flow is much
+  easier to follow. I reran the happy, empty-search, empty-wardrobe, and
+  model-unavailable paths to make sure the readability refactor did not change
+  the behavior.
 
 <!-- ═══════════════════════ UNIT 4 - THE TEST ═══════════════════════
 
